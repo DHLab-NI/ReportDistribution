@@ -1,0 +1,32 @@
+{
+  "id": "f2971553-4515-4dca-a182-b8bf7de5099c",
+  "name": "Report Distribution",
+  "publisher": "DHLab",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "Montitors report inbox and sends copy to distribution list",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "18.0.0.0",
+  "idRanges": [
+    {
+      "from": 50300,
+      "to": 50309
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "13.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
