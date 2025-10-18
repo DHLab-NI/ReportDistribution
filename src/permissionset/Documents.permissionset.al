@@ -1,5 +1,6 @@
 permissionset 50300 DHLabReportDist
 {
+    Assignable = true;
     Caption = 'DHLab Report Distribution';
     Permissions =
 
@@ -12,11 +13,11 @@ permissionset 50300 DHLabReportDist
         Codeunit "Temp Blob" = X,
 
         // Permissions for Report Inbox Monitor Configuration Tables
-        Table "Report Inbox Monitor Setup" = X,
-        Table "Monitored Report Inbox" = X,
-        Table "Report Distribution Rule" = X,
-        Table "Report Rule Recipient" = X,
-        Table "Report Inbox Send Log" = X,
+        tabledata "Report Inbox Monitor Setup" = RIMD,
+        tabledata "Monitored Report Inbox" = RIMD,
+        tabledata "Report Distribution Rule" = RIMD,
+        tabledata "Report Rule Recipient" = RIMD,
+        tabledata "Report Inbox Send Log" = RIMD,
 
         // Permissions for Email functionality
         Table "Email Account" = X,
@@ -25,7 +26,10 @@ permissionset 50300 DHLabReportDist
         // Permissions for Report Inbox Monitor Pages
         Page "Report Inbox Monitor Setup" = X,
         Page "Monitored Report Inboxes" = X,
+        Page "Monitored Report Inbox Card" = X,
         Page "Report Distribution Rules" = X,
+        Page "Report Distribution Rule Card" = X,
+        Page "Report Dist Rules Subpage" = X,
         Page "Report Rule Recipients" = X,
         Page "Report Inbox Send Log" = X;
 }
