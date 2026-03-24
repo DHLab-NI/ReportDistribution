@@ -83,6 +83,11 @@ table 50302 "Report Distribution Rule"
             DataClassification = SystemMetadata;
             InitValue = 100;
         }
+        field(130; "JQ Description Filter"; Text[250])
+        {
+            Caption = 'JQ Description Filter';
+            DataClassification = SystemMetadata;
+        }
     }
 
     keys
@@ -136,6 +141,11 @@ table 50302 "Report Distribution Rule"
             if not TextMatches(ReportName, "Report Name Filter") then
                 exit(false);
         end;
+
+        // Check JQ Description Filter match
+        if "JQ Description Filter" <> '' then
+            if not TextMatches(ReportInbox."JQ Description", "JQ Description Filter") then
+                exit(false);
 
         // Check Output Type match (blank/0 means any)
         if ("Output Type" <> 0) and (ReportInbox."Output Type" <> ConvertToEnum("Output Type")) then

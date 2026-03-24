@@ -377,22 +377,9 @@ codeunit 50300 "DHLab Report Inbox Monitor"
     end;
 
     local procedure GetJobQueueDescription(ReportInbox: Record "Report Inbox"): Text
-    var
-        JobQueueEntry: Record "Job Queue Entry";
     begin
-        // Look for a matching Job Queue Entry by report ID and user; fall back to report ID only
-        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
-        JobQueueEntry.SetRange("Object ID to Run", ReportInbox."Report ID");
-        JobQueueEntry.SetRange("User ID", ReportInbox."User ID");
-        if JobQueueEntry.FindFirst() then
-            if JobQueueEntry.Description <> '' then
-                exit(JobQueueEntry.Description);
-
-        JobQueueEntry.SetRange("User ID");
-        if JobQueueEntry.FindFirst() then
-            exit(JobQueueEntry.Description);
-
-        exit('');
+        // JQ Description is populated at inbox insert time by the Report Inbox JQ Subscriber codeunit
+        exit(ReportInbox."JQ Description");
     end;
 
     local procedure WasAlreadySent(ReportInboxEntryNo: Integer): Boolean

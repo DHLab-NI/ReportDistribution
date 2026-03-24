@@ -6,6 +6,7 @@ permissionset 50300 DHLabReportDist
 
         // Permissions for Report Inbox Monitor
         Codeunit "DHLab Report Inbox Monitor" = X,
+        Codeunit "Report Inbox JQ Subscriber" = X,
         Table "Report Inbox" = X,
         Table "User" = X,
         Codeunit "Email Message" = X,

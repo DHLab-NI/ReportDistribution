@@ -63,6 +63,12 @@ page 50306 "Report Distribution Rule Card"
                     Caption = 'Report Name Filter';
                     ToolTip = 'Specifies a filter pattern for report names (supports * wildcard).';
                 }
+                field("JQ Description Filter"; Rec."JQ Description Filter")
+                {
+                    ApplicationArea = All;
+                    Caption = 'JQ Description Filter';
+                    ToolTip = 'Specifies a filter pattern for the Job Queue Entry description (supports * wildcard). Use this to distinguish between multiple Job Queue Entries that run the same report.';
+                }
                 field("Output Type"; Rec."Output Type")
                 {
                     ApplicationArea = All;
