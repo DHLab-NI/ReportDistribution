@@ -2,7 +2,7 @@
   "id": "f2971553-4515-4dca-a182-b8bf7de5099c",
   "name": "Report Distribution",
   "publisher": "DHLab",
-  "version": "1.0.0.0",
+  "version": "1.0.0.1",
   "brief": "",
   "description": "Montitors report inbox and sends copy to distribution list",
   "privacyStatement": "",

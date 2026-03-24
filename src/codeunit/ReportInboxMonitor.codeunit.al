@@ -105,8 +105,10 @@ codeunit 50300 "DHLab Report Inbox Monitor"
         ReportName: Text;
         RuleMatched: Boolean;
     begin
-        // Get report name
-        ReportName := ReportInbox."Report Name";
+        // Get report name - prioritise Job Queue Entry description
+        ReportName := GetJobQueueDescription(ReportInbox);
+        if ReportName = '' then
+            ReportName := ReportInbox."Report Name";
         if ReportName = '' then
             ReportName := Format(ReportInbox."Report ID");
 
@@ -280,19 +282,20 @@ codeunit 50300 "DHLab Report Inbox Monitor"
         EmailAccountCU: Codeunit "Email Account";
         TempAccounts: Record "Email Account" temporary;
     begin
-        // 1) Try the scenario mapping first
+        // 1) If a preferred sender is specified, find and use that account
+        if PreferredSenderEmail <> '' then begin
+            EmailAccountCU.GetAllAccounts(TempAccounts);
+            TempAccounts.SetRange("Email Address", PreferredSenderEmail);
+            if TempAccounts.FindFirst() then
+                exit(EmailCU.Send(EmailMessage, TempAccounts));
+            Error('Email account ''%1'' not found. Configure the account in Email Accounts or update the Preferred Sender Email.', PreferredSenderEmail);
+        end;
+
+        // 2) Fallback: use the Default email scenario
         if EmailCU.Send(EmailMessage, Enum::"Email Scenario"::Default) then
             exit(true);
 
-        // 2) Fallback: collect registered accounts (as a temp record)
-        EmailAccountCU.GetAllAccounts(TempAccounts);
-        if PreferredSenderEmail <> '' then
-            TempAccounts.SetRange("Email Address", PreferredSenderEmail);
-
-        if not TempAccounts.FindFirst() then
-            Error('No email accounts are configured or the mapped account does not exist in this company. Configure Email Accounts and map the Default scenario.');
-
-        exit(EmailCU.Send(EmailMessage, TempAccounts));
+        Error('No email accounts are configured. Configure Email Accounts and map the Default scenario.');
     end;
 
     local procedure BuildRecipients(var DistributionRule: Record "Report Distribution Rule"; var ToList: List of [Text]; var CcList: List of [Text]; var BccList: List of [Text])
@@ -350,10 +353,11 @@ codeunit 50300 "DHLab Report Inbox Monitor"
     begin
         Result := Template;
 
-        // Get report name - try multiple sources
-        ReportName := ReportInbox."Report Name";
+        // Get report name - prioritise Job Queue Entry description, then Report Inbox name, then object caption
+        ReportName := GetJobQueueDescription(ReportInbox);
+        if ReportName = '' then
+            ReportName := ReportInbox."Report Name";
         if ReportName = '' then begin
-            // Try to get the report name from AllObjWithCaption
             if AllObjWithCaption.Get(AllObjWithCaption."Object Type"::Report, ReportInbox."Report ID") then
                 ReportName := AllObjWithCaption."Object Caption"
             else
@@ -370,6 +374,25 @@ codeunit 50300 "DHLab Report Inbox Monitor"
         Result := Result.Replace('%UserId%', ReportInbox."User ID");
 
         exit(Result);
+    end;
+
+    local procedure GetJobQueueDescription(ReportInbox: Record "Report Inbox"): Text
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+    begin
+        // Look for a matching Job Queue Entry by report ID and user; fall back to report ID only
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.SetRange("Object ID to Run", ReportInbox."Report ID");
+        JobQueueEntry.SetRange("User ID", ReportInbox."User ID");
+        if JobQueueEntry.FindFirst() then
+            if JobQueueEntry.Description <> '' then
+                exit(JobQueueEntry.Description);
+
+        JobQueueEntry.SetRange("User ID");
+        if JobQueueEntry.FindFirst() then
+            exit(JobQueueEntry.Description);
+
+        exit('');
     end;
 
     local procedure WasAlreadySent(ReportInboxEntryNo: Integer): Boolean
